@@ -1,22 +1,21 @@
+import "dotenv/config";
 import express from "express";
-import { User } from "./User.js";
+import { UserService } from "./services/user-service.js";
 
 const app = express();
 const port = 3000;
 
-app.get("/", (req, res) => {
-  const user = new User("Ranayke", "ranayke@email.com");
+app.get("/", async (req, res) => {
+  const userService = new UserService();
 
-  const user2 = new User('Fransisco', 'Francisco@email.com')
+  const user = {
+    name: "Ranayke",
+    email: "ranayke@email.com",
+    password: "12345678",
+  };
+  await userService.add(user);
 
-  console.log(user2);
-  user2.name = 'João'
-  console.log(user);
-  console.log(user2);
-
-  console.log(user.getFullName());
-
-  res.send("Hello World!");
+  res.send("IMAGINE SHOP");
 });
 
 app.listen(port, () => {
