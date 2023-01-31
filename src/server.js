@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import jwt from 'jsonwebtoken'
 
 import { authMiddleware } from "./middwares/authMiddleware.js";
 import { UserService } from "./services/user-service.js";
@@ -18,12 +19,16 @@ app.post("/login", async (req, res) => {
   const userService = new UserService();
   const userLogged = await userService.login(email, password);
   if (userLogged) {
-    return res.status(200).json(userLogged);
+    const secretKey = process.env.SECRET_KEY;
+    const token = jwt.sign({user: userLogged}, secretKey, {expiresIn:"3600s"})
+    return res.status(200).json({ token });
   }
   return res
     .status(400)
     .json({ message: "Não foi encontrado nenhum usuário." });
 });
+
+app.use(authMiddleware);
 
 app.post("/users", async (req, res) => {
   const { name, email, password } = req.body;
