@@ -18,19 +18,22 @@ export const authMiddleware = (req, res, next) => {
       if (err) {
         return res
           .status(401)
-          .json({ message: "Aconteceu um erro ao logar no sistema." });
+          .json({ message: "Aconteceu um erro ao logar no sistema!" });
       }
       const isValidToken = decodedToken && decodedToken.user;
       if (!isValidToken) {
         return res
           .status(401)
-          .json({ message: "Aconteceu um erro ao logar no sistema." });
+          .json({ message: "Usuário não existe no token!" });
       }
       const userService = new UserService();
       const user = await userService.findByEmail(decodedToken.user.email);
-      if (user) {
-        return next();
+      if (!user) {
+        return res
+        .status(401)
+        .json({ message: "Usuário presente no token não existe!" });
       }
     }
   );
+  return next();
 };
