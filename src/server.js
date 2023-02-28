@@ -31,6 +31,12 @@ app.post("/login", async (req, res) => {
     .json({ message: "Não foi encontrado nenhum usuário." });
 });
 
+app.get("/products", async (req, res) => {
+  const productService = new ProductService();
+  const products = await productService.findAll();
+  return res.status(200).json(products);
+});
+
 app.use(authMiddleware);
 
 app.post("/users", async (req, res) => {
