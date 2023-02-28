@@ -1,8 +1,9 @@
 import "dotenv/config";
 import express from "express";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 import { authMiddleware } from "./middwares/authMiddleware.js";
+import { ProductService } from "./services/product-service.js";
 import { UserService } from "./services/user-service.js";
 
 const app = express();
@@ -20,7 +21,9 @@ app.post("/login", async (req, res) => {
   const userLogged = await userService.login(email, password);
   if (userLogged) {
     const secretKey = process.env.SECRET_KEY;
-    const token = jwt.sign({user: userLogged}, secretKey, {expiresIn:"3600s"})
+    const token = jwt.sign({ user: userLogged }, secretKey, {
+      expiresIn: "3600s",
+    });
     return res.status(200).json({ token });
   }
   return res
@@ -76,6 +79,14 @@ app.delete("/users/:id", async (req, res) => {
     return res.status(200).json({ message: "Usuário excluído com sucesso!" });
   }
   return res.status(404).json({ message: "Usuário não encontrado!" });
+});
+
+app.post("/products", async (req, res) => {
+  const { name, description, price, summary, stock } = req.body;
+  const product = { name, description, price, summary, stock };
+  const productService = new ProductService();
+  await productService.create(product);
+  return res.status(201).json(product);
 });
 
 app.listen(port, () => {
