@@ -3,6 +3,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 
 import { authMiddleware } from "./middwares/authMiddleware.js";
+import { validateFieldsRequired } from "./middwares/validationsMiddleware.js";
 import { ProductService } from "./services/product-service.js";
 import { UserService } from "./services/user-service.js";
 
@@ -39,7 +40,7 @@ app.get("/products", async (req, res) => {
 
 app.use(authMiddleware);
 
-app.post("/users", async (req, res) => {
+app.post("/users", validateFieldsRequired, async (req, res) => {
   const { name, email, password } = req.body;
   const user = { name, email, password };
   const userService = new UserService();
