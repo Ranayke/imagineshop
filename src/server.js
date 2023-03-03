@@ -1,10 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import jwt from "jsonwebtoken";
-import multer from 'multer';
-import crypto from 'crypto';
-import { extname } from 'path';
 
+import { uploadMiddleware } from "./middwares/uploadMiddleware.js"
 import { authMiddleware } from "./middwares/authMiddleware.js";
 import { validateFieldsRequired } from "./middwares/validationsMiddleware.js";
 import { ProductService } from "./services/product-service.js";
@@ -12,21 +10,6 @@ import { UserService } from "./services/user-service.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
-
-const storage = multer.diskStorage(
-  {
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/')
-    },
-    filename: (req, file, cb) => {
-      const newFilename = crypto.randomBytes(32).toString('hex');
-      const fileExtension = extname(file.originalname);
-      cb(null, `${newFilename}${fileExtension}`);
-    }
-  }
-);
-
-const uploadMiddleware = multer({ storage });
 
 app.use(express.json());
 app.use(express.urlencoded( {extended: true }));
