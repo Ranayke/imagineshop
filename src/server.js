@@ -74,7 +74,7 @@ app.get("/users", async (req, res) => {
   return res.status(200).json(users);
 });
 
-app.get("/users/:id", authMiddleware, async (req, res) => {
+app.get("/users/:id", async (req, res) => {
   const id = req.params.id;
   const userService = new UserService();
   const user = await userService.findById(id);
@@ -115,6 +115,17 @@ app.post("/products", uploadMiddleware.single('image'), async (req, res) => {
   const productService = new ProductService();
   await productService.create(product);
   return res.status(201).json(product);
+});
+
+app.delete("/products/:id", async (req, res) => {
+  const id = req.params.id;
+  const productService = new ProductService();
+  const product = await productService.findById(id);
+  if (product) {
+    await productService.delete(id);
+    return res.status(200).json({ message: "Produto excluído com sucesso!" });
+  }
+  return res.status(404).json({ message: "Produto não encontrado!" });
 });
 
 app.listen(port, () => {

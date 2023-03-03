@@ -16,4 +16,8 @@ export class ProductService {
     return await ProductModel.findById(ObjectId(id));
   }
 
+  async delete(id) {
+    return await ProductModel.deleteOne({ _id: ObjectId(id) });
+  }
+
 }
