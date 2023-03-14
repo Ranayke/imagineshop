@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import jwt from "jsonwebtoken";
 
-import { uploadMiddleware } from "./middwares/uploadMiddleware.js"
+import { uploadMiddleware } from "./middwares/uploadMiddleware.js";
 import { authMiddleware } from "./middwares/authMiddleware.js";
 import { validateFieldsRequired } from "./middwares/validationsMiddleware.js";
 import { ProductService } from "./services/product-service.js";
@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 app.use(express.json());
-app.use(express.urlencoded( {extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
   res.send("IMAGINE SHOP");
@@ -50,7 +50,7 @@ app.get("/products/:id", async (req, res) => {
   return res.status(404).json({ message: "Produto não encontrado!" });
 });
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 app.use(authMiddleware);
 
 app.post("/users", validateFieldsRequired, async (req, res) => {
@@ -101,9 +101,9 @@ app.delete("/users/:id", async (req, res) => {
   return res.status(404).json({ message: "Usuário não encontrado!" });
 });
 
-app.post("/products", uploadMiddleware.single('image'), async (req, res) => {
+app.post("/products", uploadMiddleware.single("image"), async (req, res) => {
   const { name, description, price, summary, stock } = req.body;
-  const fileName = req.file.filename
+  const fileName = req.file.filename;
   const product = { name, description, price, summary, stock, fileName };
   const productService = new ProductService();
   await productService.create(product);
@@ -119,6 +119,15 @@ app.delete("/products/:id", async (req, res) => {
     return res.status(200).json({ message: "Produto excluído com sucesso!" });
   }
   return res.status(404).json({ message: "Produto não encontrado!" });
+});
+
+app.post("/products/sell", async (req, res) => {
+  const { products } = req.body;
+  const productService = new ProductService();
+  for (const product of products) {
+    await productService.sellProducts(product);
+  }
+  return res.status(200).json({ message: "Sucess" });
 });
 
 app.listen(port, () => {

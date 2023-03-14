@@ -20,4 +20,13 @@ export class ProductService {
     return await ProductModel.deleteOne({ _id: ObjectId(id) });
   }
 
+  async sellProducts(id) {
+    const product = await this.findById(id)
+    if(product && product.stock > 0) {
+      product.stock = product.stock - 1
+      return await ProductModel.updateOne({ _id: ObjectId(id)}, product)
+    }
+    return null
+  }
+
 }
