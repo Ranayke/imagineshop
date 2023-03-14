@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import jwt from "jsonwebtoken";
+import cors from "cors"
 
 import { uploadMiddleware } from "./middwares/uploadMiddleware.js";
 import { authMiddleware } from "./middwares/authMiddleware.js";
@@ -11,6 +12,7 @@ import { UserService } from "./services/user-service.js";
 const app = express();
 const port = process.env.PORT || 8080;
 
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
